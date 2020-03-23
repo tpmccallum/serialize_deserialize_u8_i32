@@ -67,6 +67,42 @@ mod tests {
         let v = s_d_u8_i32::flush_value_to_zero(_test_single_i32_999, 3, 3);
         assert_eq!(v, 1000000000);
     }
+    #[test]
+    fn test_flush_6_6_000() {
+        let _test_single_i32_000: u64 = 1000000000;
+        let v = s_d_u8_i32::flush_value_to_zero(_test_single_i32_000, 6, 6);
+        assert_eq!(v, 1000000000);
+    }
+    #[test]
+    fn test_flush_6_6_123() {
+        let _test_single_i32_123: u64 = 1000123123;
+        let v = s_d_u8_i32::flush_value_to_zero(_test_single_i32_123, 6, 6);
+        assert_eq!(v, 1000000000);
+    }
+    #[test]
+    fn test_flush_6_6_999() {
+        let _test_single_i32_999: u64 = 1000999999;
+        let v = s_d_u8_i32::flush_value_to_zero(_test_single_i32_999, 6, 6);
+        assert_eq!(v, 1000000000);
+    }
+    #[test]
+    fn test_flush_9_9_000() {
+        let _test_single_i32_000: u64 = 1000000000;
+        let v = s_d_u8_i32::flush_value_to_zero(_test_single_i32_000, 9, 9);
+        assert_eq!(v, 1000000000);
+    }
+    #[test]
+    fn test_flush_9_9_123() {
+        let _test_single_i32_123: u64 = 1123123123;
+        let v = s_d_u8_i32::flush_value_to_zero(_test_single_i32_123, 9, 9);
+        assert_eq!(v, 1000000000);
+    }
+    #[test]
+    fn test_flush_9_9_999() {
+        let _test_single_i32_999: u64 = 1999999999;
+        let v = s_d_u8_i32::flush_value_to_zero(_test_single_i32_999, 9, 9);
+        assert_eq!(v, 1000000000);
+    }
 
     //Actually this test can go out in the documentation because we are only dealing with u8 to i32 here
     // The struct is just one example of how this can be used at the higher level, there will be many more
