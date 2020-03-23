@@ -3,7 +3,8 @@ mod s_d_u8_i32 {
 
     pub fn exceeding_max_i32_threshold(_num: u64) -> bool {
         let max: u64 = i32::max_value().try_into().unwrap();
-        if _num >= max {
+        println!("Maximum allowable integer is {:?}", max);
+        if _num > max {
             true
         } else {
             false
@@ -28,13 +29,14 @@ mod s_d_u8_i32 {
         _position: u64,
         _size: u64,
     ) -> u64 {
+        // buffer up the single value to equal size i.e. turn 55 (two digits) into 055 (three digits) where the size is 3 etc.
         let mut string_single_value = _single_value.to_string();
         while string_single_value.len() < _size as usize {
             string_single_value = "0".to_owned() + &string_single_value;
         }
         let new_single_value: u64 = string_single_value.parse::<u64>().unwrap();
-        let new_value: u64 =
-            _value + new_single_value * (10_u64.pow((_position - _size).try_into().unwrap()));
+        let zeroed_value: u64 = flush_value_to_zero(_value, _position, _size);
+        let new_value: u64 = zeroed_value + new_single_value * (10_u64.pow((_position - _size).try_into().unwrap()));
         new_value
     }
 
@@ -92,6 +94,18 @@ mod tests {
         assert_eq!(v, 1000000000);
     }
     #[test]
+    fn test_flush_6_3_999() {
+        let _test_single_i32_999: u64 = 1999999999;
+        let v = s_d_u8_i32::flush_value_to_zero(_test_single_i32_999, 6, 3);
+        assert_eq!(v, 1999000999);
+    }
+    #[test]
+    fn test_flush_9_3_999() {
+        let _test_single_i32_000: u64 = 1999000000;
+        let v = s_d_u8_i32::flush_value_to_zero(_test_single_i32_000, 9, 3);
+        assert_eq!(v, 1000000000);
+    }
+    #[test]
     fn test_flush_9_9_123() {
         let _test_single_i32_123: u64 = 1123123123;
         let v = s_d_u8_i32::flush_value_to_zero(_test_single_i32_123, 9, 9);
@@ -102,6 +116,64 @@ mod tests {
         let _test_single_i32_999: u64 = 1999999999;
         let v = s_d_u8_i32::flush_value_to_zero(_test_single_i32_999, 9, 9);
         assert_eq!(v, 1000000000);
+    }
+    #[test]
+    fn test_access_3_3_000() {
+        let _test_single_i32_000: u64 = 1000000000;
+        let v = s_d_u8_i32::access_value(_test_single_i32_000, 3, 3);
+        assert_eq!(v, 000);
+    }
+    #[test]
+    fn test_access_3_3_123() {
+        let _test_single_i32_123: u64 = 1123123123;
+        let v = s_d_u8_i32::access_value(_test_single_i32_123, 3, 3);
+        assert_eq!(v, 123);
+    }
+    #[test]
+    fn test_access_3_3_999() {
+        let _test_single_i32_999: u64 = 1999999999;
+        let v = s_d_u8_i32::access_value(_test_single_i32_999, 3, 3);
+        assert_eq!(v, 999);
+    }
+    #[test]
+    fn test_insert_3_3_000() {
+        let _test_single_i32_000: u64 = 1000000000;
+        let _single_val: u64 = 000;
+        let v = s_d_u8_i32::insert_value_at_position(_test_single_i32_000, _single_val, 3, 3);
+        assert_eq!(v, 1000000000);
+    }
+    #[test]
+    fn test_insert_3_3_123() {
+        let _test_single_i32_123: u64 = 1123123000;
+        let _single_val: u64 = 123;
+        let v = s_d_u8_i32::insert_value_at_position(_test_single_i32_123, _single_val, 3, 3);
+        assert_eq!(v, 1123123123);
+    }
+    #[test]
+    fn test_insert_3_3_999() {
+        let _test_single_i32_999: u64 = 1999999009;
+        let _single_val: u64 = 999;
+        let v = s_d_u8_i32::insert_value_at_position(_test_single_i32_999, _single_val, 3, 3);
+        assert_eq!(v, 1999999999);
+    }
+    #[test]
+    fn test_insert_9_9_111() {
+        let _test_single_i32_999: u64 = 1999999999;
+        let _single_val: u64 = 111;
+        let v = s_d_u8_i32::insert_value_at_position(_test_single_i32_999, _single_val, 9, 3);
+        assert_eq!(v, 1111999999);
+    }
+    #[test]
+    fn test_i32_threshold_over() {
+        let number: u64 = 2147483648;
+        let b = s_d_u8_i32::exceeding_max_i32_threshold(number);
+        assert_eq!(b, true);
+    }
+    #[test]
+    fn test_i32_threshold_under() {
+        let number: u64 = 2147483647;
+        let b = s_d_u8_i32::exceeding_max_i32_threshold(number);
+        assert_eq!(b, false);
     }
 
     //Actually this test can go out in the documentation because we are only dealing with u8 to i32 here
